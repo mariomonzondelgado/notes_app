@@ -12,11 +12,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import jdk.jfr.Enabled
 
 @Composable
 @Preview
 fun App() {
-    var text by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf("")
+
+    }
+
+    val buttonEnable = text.isNotEmpty()
+
 
     MaterialTheme {
         Column {
@@ -26,16 +32,26 @@ fun App() {
                     text = nextText
                 }
             )
-            Text(text = "Hello $text")
-            Button(onClick = {
-                text = ""
-            }) {
-                Text("Clear")
-            }
+            Text(text = buildMessage(message = text))
+            ClearButton(
+                buttonEnable = buttonEnable,
+                onClick = { text = "" }
+            )
         }
 
     }
 }
+
+@Composable
+fun ClearButton(buttonEnable: Boolean, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        enabled = buttonEnable) {
+        Text("Clear")
+    }
+}
+
+fun buildMessage(message: String) = "Hello $message"
 
 fun main() = application {
     Window(
