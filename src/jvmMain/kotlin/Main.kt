@@ -14,28 +14,30 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import jdk.jfr.Enabled
 
+class AppState {
+    var text by mutableStateOf("")
+    // fun isButtonEnabled() = text.isNotEmpty()
+    val buttonEnabled: Boolean
+        get() = text.isNotEmpty()
+}
+
 @Composable
 @Preview
-fun App() {
-    var text by remember { mutableStateOf("")
-
-    }
-
-    val buttonEnable = text.isNotEmpty()
-
+fun App(appState: AppState) {
 
     MaterialTheme {
         Column {
             TextField(
-                value = text,
+                value = appState.text,
                 onValueChange = { nextText ->
-                    text = nextText
+                    appState.text = nextText
                 }
             )
-            Text(text = buildMessage(message = text))
+            Text(text = buildMessage(message = appState.text))
             ClearButton(
-                buttonEnable = buttonEnable,
-                onClick = { text = "" }
+                //buttonEnable = appState.isButtonEnabled(),
+                buttonEnable = appState.buttonEnabled,
+                onClick = { appState.text = "" }
             )
         }
 
@@ -53,11 +55,16 @@ fun ClearButton(buttonEnable: Boolean, onClick: () -> Unit) {
 
 fun buildMessage(message: String) = "Hello $message"
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "Notes App"
-    ) {
-        App()
+fun main() {
+
+    val appState = AppState()
+
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "Notes App"
+        ) {
+            App(appState)
+        }
     }
 }
